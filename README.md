@@ -28,7 +28,7 @@ ollama pull llama3.1:8b-instruct-fp16
 ### 3. Install Python Dependencies
 The following Python packages are required:
 ```bash
-pip install chardet requests docx2txt pdfplumber beautifulsoup4 pytesseract pillow PyMuPDF python-docx
+pip install chardet requests docx2txt pdfplumber beautifulsoup4 pytesseract pillow PyMuPDF python-docx python-pptx
 ```
 # Preparing Code for Analysis
 

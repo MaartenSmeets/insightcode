@@ -39,14 +39,19 @@ Generate a **well-structured and visually appealing** Mermaid diagram that illus
 """
 
 def generate_mermaid_code(combined_summary: str) -> str:
-    """Generate Mermaid diagram prompt and save to a file."""
-    # Example implementation for Mermaid
-    prompt = f"Your Mermaid diagram based on: {combined_summary}"
+    """Generate Mermaid diagram based on the given codebase summary and save it to a file."""
     
-    # Save the prompt to a file in the output directory
+    # Generate the complete prompt using the template
+    prompt = MERMAID_PROMPT_TEMPLATE.format(combined_summary=combined_summary)
+    
+    # Generate a unique filename for the prompt
     prompt_filename = generate_unique_filename("mermaid_prompt", "txt")
     prompt_filepath = OUTPUT_DIR / prompt_filename
+    
+    # Save the prompt to a file in the output directory
     save_output_to_file(prompt, prompt_filepath)
+    
+    # Log the saved prompt location
     logging.info(f"Mermaid prompt saved to {prompt_filepath}")
     
     return prompt  # Ensure a valid string is returned

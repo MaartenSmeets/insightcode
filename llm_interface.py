@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
-from config import OLLAMA_URL, DEFAULT_SUMMARIZATION_MODEL, CACHE_DIR
-from helpers import save_output_to_file
+from config import OLLAMA_URL, DEFAULT_SUMMARIZATION_MODEL, CACHE_DIR, OUTPUT_DIR
+from helpers import save_output_to_file, generate_unique_filename
 from file_readers import get_reader
 import requests
 import json
@@ -94,23 +94,25 @@ def generate_response_with_llm(prompt: str, model: str) -> str:
         raise e
 
 def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMARIZATION_MODEL) -> str:
-    """Summarize the entire repository, skipping directories and only processing files."""
+    """Summarize the entire repository and save individual summaries with unique filenames."""
     
-    # List all files recursively in the directory (skip directories)
+    # Create a directory for saving individual summaries
+    summaries_dir = OUTPUT_DIR / "summaries"
+    summaries_dir.mkdir(parents=True, exist_ok=True)
+    
     all_files = [f for f in directory.glob('**/*') if f.is_file()]
-    total_files = len(all_files)  # Get the total number of files
-    codebase_summary = []
-
+    total_files = len(all_files)
+    combined_summary = []
+    
     logging.info(f"Starting codebase summarization... Total files to process: {total_files}")
 
-    # Process each file and update progress
+    # Process each file and save the summaries
     for idx, file_path in enumerate(all_files, start=1):
-        # Log the reader used for each file
         file_extension = file_path.suffix
         reader = get_reader(file_extension)
         logging.info(f"Processing file {idx}/{total_files} ({file_path.name}) with reader for extension {file_extension}")
 
-        # Read file content (handle possible encoding issues)
+        # Read file content
         try:
             file_content = reader(file_path)
         except Exception as e:
@@ -118,19 +120,27 @@ def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMA
             continue
 
         # Prepare the prompt for summarization
-        prompt = FILE_SUMMARY_PROMPT_TEMPLATE.format(file_path=file_path, file_content=file_content)
-
+        prompt = f"Summarize the following file: {file_path}\n\n{file_content}"
+        
         # Generate the summary using the LLM
         try:
             summary = generate_response_with_llm(prompt, summarization_model)
-            codebase_summary.append(summary)
+            if summary:
+                # Save each summary in the summaries directory with a unique filename
+                summary_filename = generate_unique_filename(file_path.stem, "txt")
+                summary_file_path = summaries_dir / summary_filename
+                save_output_to_file(summary, summary_file_path)
+                logging.info(f"Summary saved to {summary_file_path}")
+
+                # Add to the combined summary with the filename
+                combined_summary.append(f"Filename: {file_path}\n{summary}\n")
         except Exception as e:
             logging.error(f"Error generating summary for file {file_path}: {e}")
             continue
 
-        # Calculate and log progress in percentage
+        # Log progress in percentage
         progress_percentage = (idx / total_files) * 100
         logging.info(f"Progress: {progress_percentage:.2f}% ({idx}/{total_files} files processed)")
 
-    # Combine all file summaries into a single summary
-    return "\n".join(codebase_summary)
+    # Combine all summaries and return
+    return "\n".join(combined_summary)

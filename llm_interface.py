@@ -8,39 +8,53 @@ import json
 import shelve
 from hashlib import md5
 
+# Set up logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 # File Summary Prompt Template
-FILE_SUMMARY_PROMPT_TEMPLATE = """You are tasked with summarizing a file from a software repository. Provide only a **precise**, **comprehensive**, and **well-structured** **English language** summary that accurately reflects the contents of the file. Do not write or update code. Do not generate code to create a summary but create a summary. Do not ask for confirmation. Do not provide suggestions. Do not provide recommendations. Do not mention potential improvements. Do not mention considerations. Do not mention what you are not certain of. Do not mention the document or file. Focus solely on creating the summary. Avoid redundancy and do not summarize the summary. The summary must be:
+FILE_SUMMARY_PROMPT_TEMPLATE = """
+**Task**: Provide a concise and factual summary of the following file's content in **English**, focusing on its purpose and functionality.
 
-- **Factual and objective**: Include only verifiable information based on the provided file. Avoid any assumptions, opinions, interpretations, or speculative conclusions.
-- **Specific and relevant**: Directly reference the actual contents of the file. Avoid general statements or unrelated information. Focus on the specific purpose, functionality, and structure of the file.
-- **Concise yet complete**: Ensure that the summary captures all essential details while being succinct. Eliminate redundancy and unnecessary information.
+**Important Instructions**:
+- **Do not generate or write any code**: Avoid providing code snippets, sample implementations, or any form of code.
+- **Do not offer suggestions, improvements, or critiques**: Do not analyze the code for potential enhancements or provide feedback.
+- **Do not explain how to accomplish tasks**: Refrain from giving instructions or methods for implementation.
+- **Avoid detailed code explanations**: Do not translate code logic into step-by-step descriptions.
+- **Do not include any code elements**: Omit specific variable names, function names, or code-specific details unless essential for understanding.
+- **Focus on high-level aspects**: Concentrate on the overall purpose and functionality without delving into implementation details.
 
-In particular, address the following when applicable and relevant to the file’s role in the codebase. When not applicable, leave out the section:
-- **Purpose and functionality**: Describe the file's core purpose, what functionality it implements, and how it fits into the broader system.
-- **Key components**: Highlight any critical functions, classes, methods, or modules defined in the file and explain their roles.
-- **Inputs and outputs**: Explicitly mention any input data or parameters the file processes, and describe the outputs it generates.
-- **Dependencies**: Identify any internal or external dependencies (e.g., libraries, APIs, other files) and explain how they are used in the file.
-- **Data flow**: Describe the flow of data through the file, including how data is processed, transformed, or manipulated.
-- **Interactions**: If applicable, detail how this file interacts with other parts of the system or external systems.
+**Do not include any code snippets, code examples, implementation details, suggestions, critiques, or recommendations in your response.**
 
-Your summary should provide enough detail to give a clear understanding of the file’s purpose and its function within the codebase, without adding unnecessary explanations or speculative content.
+---
 
-**File being summarized**: {file_path}
+**File Path**: {file_path}
+
+**File Content**:
+
 {file_content}
 
-***Your task**
-Your goal is to only create a summary in English of the file's purpose, functionality, key components, inputs/outputs, dependencies, data flow, and interactions, ensuring the summary is factual, specific, relevant, and concise.
+---
+
+**Your Summary**:
+"""
+
+# System prompt to control behavior of the LLM
+SYSTEM_PROMPT = """
+You are an assistant that summarizes code files by providing concise, high-level overviews without including any code or technical details. Focus on describing the purpose, functionality, and interactions of the code without generating or suggesting code.
 """
 
 def init_cache() -> shelve.Shelf:
     """Initialize the shelve cache."""
+    logging.debug("Initializing cache directory")
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     return shelve.open(str(CACHE_DIR / 'llm_cache.db'))
 
 def generate_cache_key(prompt: str, model: str) -> str:
     """Generate a unique hash for cache key based on input."""
     key_string = f"{model}_{prompt}"
-    return md5(key_string.encode()).hexdigest()
+    cache_key = md5(key_string.encode()).hexdigest()
+    logging.debug(f"Generated cache key: {cache_key} for prompt: {prompt[:50]}")
+    return cache_key
 
 def generate_response_with_llm(prompt: str, model: str) -> str:
     """Call the LLM via API to generate responses with caching."""
@@ -57,32 +71,51 @@ def generate_response_with_llm(prompt: str, model: str) -> str:
     # If not cached, call the LLM API
     try:
         logging.info(f"Sending request to LLM with model '{model}' and prompt size {len(prompt)}")
-        payload = {"model": model, "prompt": prompt}
+
+        # Use 'prompt' instead of 'messages' in the payload
+        payload = {
+            "model": model,
+            "prompt": prompt,
+            "system": SYSTEM_PROMPT
+        }
+
+        logging.debug(f"Payload: {json.dumps(payload)}")
+
         headers = {'Content-Type': 'application/json'}
         response = requests.post(OLLAMA_URL, data=json.dumps(payload), headers=headers, stream=True)
 
+        logging.debug(f"Response status code: {response.status_code}")
+
         if response.status_code != 200:
             logging.error(f"Failed to generate response with LLM: HTTP {response.status_code}")
+            logging.debug(f"Response content: {response.text}")
             cache.close()
             return ""
 
+        # Read the streaming response
         response_content = ""
         for line in response.iter_lines():
             if line:
                 try:
-                    line_json = json.loads(line.decode('utf-8'))
-                    response_text = line_json.get('response', '')
-                    response_content += response_text
+                    data = json.loads(line.decode('utf-8'))
+                    # Check if 'response' field is present
+                    if 'response' in data:
+                        response_content += data['response']
+                    if data.get('done', False):
+                        break
                 except json.JSONDecodeError as e:
-                    logging.error(f"Failed to parse line as JSON: {e}")
+                    logging.error(f"JSONDecodeError: {e}")
+                    logging.debug(f"Line content: {line}")
                     continue
 
         if not response_content:
             logging.warning("Unexpected response or no response.")
+            logging.debug(f"Complete raw response: {response.text}")
             cache.close()
             return ""
 
         # Cache the result
+        logging.debug("Caching the generated response.")
         cache[cache_key] = response_content
         cache.close()
 
@@ -92,7 +125,8 @@ def generate_response_with_llm(prompt: str, model: str) -> str:
         logging.error(f"Failed to generate response with LLM: {e}")
         cache.close()
         raise e
-
+        
+    
 def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMARIZATION_MODEL) -> str:
     """Summarize the entire repository and save individual summaries with unique filenames."""
     
@@ -115,12 +149,13 @@ def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMA
         # Read file content
         try:
             file_content = reader(file_path)
+            logging.debug(f"Read content from file {file_path}")
         except Exception as e:
             logging.error(f"Error reading file {file_path}: {e}")
             continue
 
         # Prepare the prompt for summarization
-        prompt = f"Summarize the following file: {file_path}\n\n{file_content}"
+        prompt = FILE_SUMMARY_PROMPT_TEMPLATE.format(file_path=file_path, file_content=file_content)
         
         # Generate the summary using the LLM
         try:

@@ -22,12 +22,6 @@ flowchart LR
         FileProcessing -->|Processes files| Summarization[Code Summarization]
         Summarization -->|Generates summary| DiagramGeneration[Diagram Generation]
         DiagramGeneration -->|Creates prompt| OutputPrompt[Diagram Prompt]
-        
-        Helpers[Helpers] -->|Supports| FileProcessing
-        Configuration[Configuration] -->|Configures| Summarization
-        Helpers -->|Supports| Summarization
-        Configuration -->|Configures| DiagramGeneration
-        Helpers -->|Supports| DiagramGeneration
     end
     class Main_Application mainApp
 

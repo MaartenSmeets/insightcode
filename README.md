@@ -5,78 +5,63 @@ InsightCode is a tool designed to analyze codebases and provide detailed insight
 ```mermaid
 flowchart LR
     %% Define styles for different groups
-    classDef user fill:#E5E5E5,stroke:#333333,stroke-width:1px
-    classDef mainApp fill:#D5E8D4,stroke:#82B366,stroke-width:1px
-    classDef fileProc fill:#FFF2CC,stroke:#D6B656,stroke-width:1px
-    classDef summarization fill:#F8CECC,stroke:#B85450,stroke-width:1px
-    classDef diagramGen fill:#DAE8FC,stroke:#6C8EBF,stroke-width:1px
-    classDef utilities fill:#E1D5E7,stroke:#9673A6,stroke-width:1px
-    classDef external fill:#F5F5F5,stroke:#999999,stroke-width:1px
-    classDef dataStore fill:#F8F8F8,stroke:#666666,stroke-width:1px
+    classDef mainApp fill:#D5E8D4,stroke:#82B366,stroke-width:2px
+    classDef fileProc fill:#FFF2CC,stroke:#D6B656,stroke-width:2px
+    classDef summarization fill:#F8CECC,stroke:#B85450,stroke-width:2px
+    classDef diagramGen fill:#DAE8FC,stroke:#6C8EBF,stroke-width:2px
+    classDef utilities fill:#E1D5E7,stroke:#9673A6,stroke-width:2px
+    classDef external fill:#F5F5F5,stroke:#999999,stroke-width:2px
+    classDef dataStore fill:#F8F8F8,stroke:#666666,stroke-width:2px
 
-    %% User and Data Stores
-    User([User])
-    Repository[Code Repository]
-    OutputDirectory[Output Directory]
+    %% Input and Output
+    Repository[Code Repository] -->|Provides codebase| FileProcessing[File Processing]
+
+    %% Main Application
+    subgraph Main_Application [Main Application]
+        direction TB
+        FileProcessing -->|Processes files| Summarization[Code Summarization]
+        Summarization -->|Generates summary| DiagramGeneration[Diagram Generation]
+        DiagramGeneration -->|Creates prompt| OutputPrompt[Diagram Prompt]
+        OutputPrompt -->|Saves to| OutputDirectory[Output Directory]
+        
+        Helpers[Helpers] -->|Supports| FileProcessing
+        Configuration[Configuration] -->|Configures| Summarization
+        Helpers -->|Supports| Summarization
+        Configuration -->|Configures| DiagramGeneration
+        Helpers -->|Supports| DiagramGeneration
+    end
+    class Main_Application mainApp
 
     %% External Systems
-    subgraph ExternalSystems [External Systems]
+    subgraph External_Systems [External Systems]
         direction TB
-        LLM[Language Model]
+        Summarization -->|Calls API| OllamaAPI[Ollama Server API]
+        OllamaAPI -->|Provides responses| OllamaLLM[Ollama Language Model]
     end
-    class LLM external
+    class OllamaAPI, OllamaLLM
 
-    %% Codebase Components
-    subgraph Codebase [Codebase]
-        direction TB
+    %% Data Stores
+    class Repository,OutputDirectory,OutputPrompt dataStore
 
-        subgraph MainApplication [Main Application]
-            direction TB
-            Orchestration[Orchestration]
-        end
-        class Orchestration mainApp
+    %% Utilities
+    class Helpers,Configuration utilities
 
-        subgraph FileProcessing [File Processing]
-            direction TB
-            FileProcessingModule[File Processing]
-        end
-        class FileProcessingModule fileProc
+    %% Assign classes to components
+    class FileProcessing fileProc
+    class Summarization summarization
+    class DiagramGeneration diagramGen
 
-        subgraph Summarization [Code Summarization]
-            direction TB
-            SummarizationModule[Summarization]
-        end
-        class SummarizationModule summarization
+    %% Layout adjustments to minimize crossing lines
+    %% Position external systems to the right
+    %% Ensure repository is on the far left
 
-        subgraph DiagramGeneration [Diagram Generation]
-            direction TB
-            DiagramGenerationModule[Diagram Generation]
-        end
-        class DiagramGenerationModule diagramGen
-
-        subgraph Utilities [Utilities]
-            direction TB
-            Helpers
-            Configuration
-        end
-        class Helpers,Configuration utilities
-    end
-
-    %% Connections
-    User -->|provides repository| Orchestration
-    Orchestration -->|reads files| FileProcessingModule
-    FileProcessingModule -->|accesses| Repository
-    Orchestration -->|summarizes code| SummarizationModule
-    SummarizationModule -->|interacts with| LLM
-    Orchestration -->|generates diagrams| DiagramGenerationModule
-    Orchestration -->|saves outputs| OutputDirectory
-
-    %% Implicit use of Utilities
-    %% (Utilities are used by all components within Codebase)
-
-    %% Assign classes to data stores and user
-    class User user
-    class Repository,OutputDirectory dataStore
+    %% Additional styling to enhance professionalism
+    linkStyle 0 stroke:#333, stroke-width:2px
+    linkStyle 1 stroke:#333, stroke-width:2px
+    linkStyle 2 stroke:#333, stroke-width:2px
+    linkStyle 3 stroke:#333, stroke-width:2px
+    linkStyle 4 stroke:#333, stroke-width:2px
+    linkStyle 5 stroke:#333, stroke-width:2px
 ```
 
 ## Features

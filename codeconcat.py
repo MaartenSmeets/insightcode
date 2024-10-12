@@ -15,7 +15,7 @@ def combine_python_files(folder_path, output_file, exclude_folders=None):
 
     # Set default excluded folders if none provided
     if exclude_folders is None:
-        exclude_folders = ['.venv']
+        exclude_folders = ['.venv', '__pycache__', '.git', '.idea', 'repo']
 
     with open(output_file, 'w') as outfile:
         # Walk through the folder and subfolders

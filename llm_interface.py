@@ -49,6 +49,26 @@ You are a code summarization assistant. Your task is to provide **concise, high-
 - **You are not allowed to modify or generate any code**.
 """
 
+DIAGRAM_SYSTEM_PROMPT = """
+You are a diagram code generation assistant. Your task is to generate **valid and accurate diagram code** for either PlantUML or Mermaid based on the provided prompts. Do not include any explanations, feedback, or summaries. Focus solely on generating the diagram code as per the instructions.
+
+### Instructions:
+- **Under no circumstances should you include explanations, feedback, or summaries** in your responses.
+- **Do not provide any additional text** beyond the diagram code.
+- **Ensure that the diagram code is syntactically correct** and adheres to the standards of the specified diagram language (PlantUML or Mermaid).
+- **Do not include comments or annotations** in the diagram code unless explicitly requested.
+- **Do not modify or generate any non-diagram code**.
+- Focus strictly on translating the provided prompts into the appropriate diagram code format.
+- **Maintain consistency and clarity** in the diagram code to accurately represent the intended architecture or data flow.
+- **Ensure that the diagram accurately reflects** the provided summary without introducing inaccuracies or omissions.
+- **Use appropriate diagram syntax** based on the output format (PlantUML or Mermaid) specified in the prompt.
+- **Do not mention file extensions, function parameters, or specific implementation details** in the diagram unless explicitly specified.
+- **Avoid using special characters** in labels; use alphanumeric characters and underscores for naming consistency.
+- **Do not wrap the diagram code in any markdown or code blocks**; provide only the raw diagram code.
+
+Your responses should consist solely of the diagram code without any additional commentary or formatting.
+"""
+
 def clean_cache():
     """Clean the cache by removing the cache directory if it exists."""
     if CACHE_DIR.exists() and CACHE_DIR.is_dir():
@@ -142,7 +162,7 @@ def generate_response_with_llm(user_prompt: str, system_prompt: str, model: str)
         cache.close()
         raise e
     
-    
+
 def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMARIZATION_MODEL) -> str:
     """Summarize the entire repository and save individual summaries with unique filenames."""
 

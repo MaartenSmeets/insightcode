@@ -1,7 +1,8 @@
 import logging
 from pathlib import Path
-from config import OUTPUT_DIR
-from helpers import save_output_to_file, generate_unique_filename
+from config import OUTPUT_DIR, DEFAULT_DIAGRAM_MODEL
+from helpers import save_output_to_file
+from llm_interface import generate_response_with_llm, DIAGRAM_SYSTEM_PROMPT
 
 # Mermaid Prompt Template
 MERMAID_PROMPT_TEMPLATE = """**Objective:**
@@ -38,20 +39,13 @@ who interacts with the analyzed code. The user should be on the left of the diag
 Generate a **well-structured and visually appealing** Mermaid diagram that illustrates the system’s architecture and functional data flows based on the provided summary. The output should be valid Mermaid code, with no extra commentary or text beyond the code itself.
 """
 
-def generate_mermaid_code(combined_summary: str) -> str:
-    """Generate Mermaid diagram based on the given codebase summary and save it to a file."""
-    
-    # Generate the complete prompt using the template
+def generate_mermaid_prompt(combined_summary: str) -> str:
+    """Generate the Mermaid diagram prompt based on the given codebase summary."""
     prompt = MERMAID_PROMPT_TEMPLATE.format(combined_summary=combined_summary)
-    
-    # Generate a unique filename for the prompt
-    prompt_filename = generate_unique_filename("mermaid_prompt", "txt")
-    prompt_filepath = OUTPUT_DIR / prompt_filename
-    
-    # Save the prompt to a file in the output directory
-    save_output_to_file(prompt, prompt_filepath)
-    
-    # Log the saved prompt location
-    logging.info(f"Mermaid prompt saved to {prompt_filepath}")
-    
-    return prompt  # Ensure a valid string is returned
+    return prompt
+
+def generate_mermaid_code(prompt: str) -> str:
+    """Generate Mermaid diagram code based on the provided prompt."""
+    # Generate the diagram code by sending the prompt to the LLM
+    diagram_code = generate_response_with_llm(prompt, DIAGRAM_SYSTEM_PROMPT, model=DEFAULT_DIAGRAM_MODEL)
+    return diagram_code  # Ensure a valid string is returned

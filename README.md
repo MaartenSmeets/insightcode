@@ -4,47 +4,79 @@ InsightCode is a tool designed to analyze codebases and provide detailed insight
 
 ```mermaid
 flowchart LR
-    User[User] -->|provides repository| MainModule[Main Module]
-    subgraph MainApplication [Main Application]
-        direction TB
-        MainModule
-        LLMInterface[LLM Interface]
-        DiagramGenerators[Diagram Generators]
-        FileReaders[File Readers]
-        Helpers
-        Configuration
-    end
+    %% Define styles for different groups
+    classDef user fill:#E5E5E5,stroke:#333333,stroke-width:1px
+    classDef mainApp fill:#D5E8D4,stroke:#82B366,stroke-width:1px
+    classDef fileProc fill:#FFF2CC,stroke:#D6B656,stroke-width:1px
+    classDef summarization fill:#F8CECC,stroke:#B85450,stroke-width:1px
+    classDef diagramGen fill:#DAE8FC,stroke:#6C8EBF,stroke-width:1px
+    classDef utilities fill:#E1D5E7,stroke:#9673A6,stroke-width:1px
+    classDef external fill:#F5F5F5,stroke:#999999,stroke-width:1px
+    classDef dataStore fill:#F8F8F8,stroke:#666666,stroke-width:1px
+
+    %% User and Data Stores
+    User([User])
+    Repository[Code Repository]
+    OutputDirectory[Output Directory]
+
+    %% External Systems
     subgraph ExternalSystems [External Systems]
         direction TB
-        LLM[External Language Model]
-        ExternalLibraries[External Libraries]
+        LLM[Language Model]
     end
-    MainModule -->|calls| LLMInterface
-    LLMInterface -->|uses| FileReaders
-    FileReaders -->|read files from| Repository[Code Repository]
-    FileReaders -->|use| ExternalLibraries
-    LLMInterface -->|interacts with| LLM
-    LLMInterface -->|returns summaries to| MainModule
-    MainModule -->|provides summaries to| DiagramGenerators
-    DiagramGenerators -->|generate diagrams| MainModule
-    DiagramGenerators -->|use| ExternalLibraries
-    MainModule -->|saves outputs to| OutputDirectory[Output Directory]
-    MainModule -->|uses| Helpers
-    LLMInterface -->|uses| Helpers
-    FileReaders -->|use| Helpers
-    DiagramGenerators -->|use| Helpers
-    MainModule -->|uses| Configuration
-    LLMInterface -->|uses| Configuration
-    FileReaders -->|use| Configuration
-    DiagramGenerators -->|use| Configuration
+    class LLM external
+
+    %% Codebase Components
+    subgraph Codebase [Codebase]
+        direction TB
+
+        subgraph MainApplication [Main Application]
+            direction TB
+            Orchestration[Orchestration]
+        end
+        class Orchestration mainApp
+
+        subgraph FileProcessing [File Processing]
+            direction TB
+            FileProcessingModule[File Processing]
+        end
+        class FileProcessingModule fileProc
+
+        subgraph Summarization [Code Summarization]
+            direction TB
+            SummarizationModule[Summarization]
+        end
+        class SummarizationModule summarization
+
+        subgraph DiagramGeneration [Diagram Generation]
+            direction TB
+            DiagramGenerationModule[Diagram Generation]
+        end
+        class DiagramGenerationModule diagramGen
+
+        subgraph Utilities [Utilities]
+            direction TB
+            Helpers
+            Configuration
+        end
+        class Helpers,Configuration utilities
+    end
+
+    %% Connections
+    User -->|provides repository| Orchestration
+    Orchestration -->|reads files| FileProcessingModule
+    FileProcessingModule -->|accesses| Repository
+    Orchestration -->|summarizes code| SummarizationModule
+    SummarizationModule -->|interacts with| LLM
+    Orchestration -->|generates diagrams| DiagramGenerationModule
+    Orchestration -->|saves outputs| OutputDirectory
+
+    %% Implicit use of Utilities
+    %% (Utilities are used by all components within Codebase)
+
+    %% Assign classes to data stores and user
     class User user
-    class MainModule,LLMInterface,DiagramGenerators,FileReaders,Helpers,Configuration main
-    class LLM,ExternalLibraries external
-    class Repository,OutputDirectory data
-    classDef user fill:#E5E5E5,stroke:#333,stroke-width:1px
-    classDef main fill:#D5E8D4,stroke:#82B366,stroke-width:1px
-    classDef external fill:#F8CECC,stroke:#B85450,stroke-width:1px
-    classDef data fill:#FFF2CC,stroke:#D6B656,stroke-width:1px
+    class Repository,OutputDirectory dataStore
 ```
 
 ## Features
@@ -75,6 +107,9 @@ Python dependencies need to be installed:
 ```bash
 pip install -r requirements.txt
 ```
+
+Note: Make sure you have Tesseract OCR installed on your system for pytesseract to function properly. You may need to configure the Tesseract executable path if it's not in your system's PATH environment variable.
+
 # Preparing Code for Analysis
 
 ## Create a repo/ folder:

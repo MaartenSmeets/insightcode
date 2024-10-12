@@ -2,6 +2,51 @@
 
 InsightCode is a tool designed to analyze codebases and provide detailed insights, including code summaries and architecture visualizations. This tool is ideal for gaining an understanding of legacy codebases, aiding in integration, modernization, or test scenario creation. The output can be used to ask questions about the code, generate diagrams, or create documentation.
 
+```mermaid
+flowchart LR
+    User[User] -->|provides repository| MainModule[Main Module]
+    subgraph MainApplication [Main Application]
+        direction TB
+        MainModule
+        LLMInterface[LLM Interface]
+        DiagramGenerators[Diagram Generators]
+        FileReaders[File Readers]
+        Helpers
+        Configuration
+    end
+    subgraph ExternalSystems [External Systems]
+        direction TB
+        LLM[External Language Model]
+        ExternalLibraries[External Libraries]
+    end
+    MainModule -->|calls| LLMInterface
+    LLMInterface -->|uses| FileReaders
+    FileReaders -->|read files from| Repository[Code Repository]
+    FileReaders -->|use| ExternalLibraries
+    LLMInterface -->|interacts with| LLM
+    LLMInterface -->|returns summaries to| MainModule
+    MainModule -->|provides summaries to| DiagramGenerators
+    DiagramGenerators -->|generate diagrams| MainModule
+    DiagramGenerators -->|use| ExternalLibraries
+    MainModule -->|saves outputs to| OutputDirectory[Output Directory]
+    MainModule -->|uses| Helpers
+    LLMInterface -->|uses| Helpers
+    FileReaders -->|use| Helpers
+    DiagramGenerators -->|use| Helpers
+    MainModule -->|uses| Configuration
+    LLMInterface -->|uses| Configuration
+    FileReaders -->|use| Configuration
+    DiagramGenerators -->|use| Configuration
+    class User user
+    class MainModule,LLMInterface,DiagramGenerators,FileReaders,Helpers,Configuration main
+    class LLM,ExternalLibraries external
+    class Repository,OutputDirectory data
+    classDef user fill:#E5E5E5,stroke:#333,stroke-width:1px
+    classDef main fill:#D5E8D4,stroke:#82B366,stroke-width:1px
+    classDef external fill:#F8CECC,stroke:#B85450,stroke-width:1px
+    classDef data fill:#FFF2CC,stroke:#D6B656,stroke-width:1px
+```
+
 ## Features
 - **Automated code summaries**: Get concise, accurate descriptions of code files.
 - **Mermaid diagram generation**: Visualize your system architecture in a flowchart format.
@@ -26,9 +71,9 @@ After installation, pull the necessary model:
 ollama pull llama3.1:8b-instruct-fp16
 ```
 ### 3. Install Python Dependencies
-The following Python packages are required:
+Python dependencies need to be installed:
 ```bash
-pip install chardet requests docx2txt pdfplumber beautifulsoup4 pytesseract pillow PyMuPDF python-docx python-pptx
+pip install -r requirements.txt
 ```
 # Preparing Code for Analysis
 

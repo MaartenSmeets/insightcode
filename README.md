@@ -22,7 +22,6 @@ flowchart LR
         FileProcessing -->|Processes files| Summarization[Code Summarization]
         Summarization -->|Generates summary| DiagramGeneration[Diagram Generation]
         DiagramGeneration -->|Creates prompt| OutputPrompt[Diagram Prompt]
-        OutputPrompt -->|Saves to| OutputDirectory[Output Directory]
         
         Helpers[Helpers] -->|Supports| FileProcessing
         Configuration[Configuration] -->|Configures| Summarization
@@ -41,7 +40,7 @@ flowchart LR
     class OllamaAPI, OllamaLLM
 
     %% Data Stores
-    class Repository,OutputDirectory,OutputPrompt dataStore
+    class Repository,OutputPrompt dataStore
 
     %% Utilities
     class Helpers,Configuration utilities

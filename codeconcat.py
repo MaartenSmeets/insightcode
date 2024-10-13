@@ -20,12 +20,19 @@ def combine_python_files(folder_path, output_file, exclude_folders=None):
     with open(output_file, 'w') as outfile:
         # Walk through the folder and subfolders
         for root, dirs, files in os.walk(folder_path):
-            # Skip excluded folders
+            # Get the relative path of the current folder from the root
+            relative_root = os.path.relpath(root, folder_path)
+
+            # Check if any part of the relative path contains an excluded folder
+            if any(excluded in relative_root.split(os.sep) for excluded in exclude_folders):
+                continue
+
+            # Skip excluded folders (by modifying dirs in place)
             dirs[:] = [d for d in dirs if d not in exclude_folders]
 
             for file in files:
                 if file.endswith(".py"):
-                    # Get the relative path of the file
+                    # Get the full file path
                     file_path = os.path.join(root, file)
                     relative_path = os.path.relpath(file_path, folder_path)
 
@@ -46,5 +53,5 @@ def combine_python_files(folder_path, output_file, exclude_folders=None):
 # Example usage:
 folder_path = './.'  # Change this to your target folder
 output_file = './combined_python_files.txt'  # Change this to the desired output file path
-exclude_folders = ['.venv', '__pycache__']  # Add more folders to exclude if needed
+exclude_folders = ['.venv', '__pycache__', 'repo']  # Add more folders to exclude if needed
 combine_python_files(folder_path, output_file, exclude_folders)

@@ -10,7 +10,7 @@ DEFAULT_DIAGRAM_MODEL = "llama3.1:70b-instruct-q4_K_M"  # Configurable model
 CLEAN_CACHE_ON_STARTUP = True  # Set to True to clean cache at startup, False to retain cache
 
 # Diagram Generation Configuration
-GENERATE_DIAGRAM = False  # Set to True to enable diagram generation, False to disable
+GENERATE_DIAGRAM = True  # Set to True to enable diagram generation, False to disable
 
 # Directories
 CACHE_DIR = Path('cache')

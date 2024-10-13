@@ -62,8 +62,6 @@ DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your tas
 - **Avoid special characters** in labels; use only alphanumeric characters and underscores.
 - **Do not include file extensions, function parameters, or specific implementation details** unless explicitly requested.
 - **Provide only the raw diagram code**, without wrapping it in markdown or code blocks.
-
-Your response should consist solely of the diagram code.
 """
 
 def clean_cache():
@@ -73,8 +71,14 @@ def clean_cache():
         shutil.rmtree(CACHE_DIR)
         logging.info("Cache directory cleaned.")
 
+_cache_cleaned = False  # Global flag to track if the cache has been cleaned
+
 def init_cache() -> shelve.Shelf:
-    """Initialize the shelve cache."""
+    """Initialize the shelve cache and clean it only once if required."""
+    global _cache_cleaned
+    if CLEAN_CACHE_ON_STARTUP and not _cache_cleaned:
+        clean_cache()
+        _cache_cleaned = True
     logging.debug("Initializing cache directory")
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     return shelve.open(str(CACHE_DIR / 'llm_cache.db'))
@@ -88,8 +92,6 @@ def generate_cache_key(user_prompt: str, system_prompt: str, model: str) -> str:
 
 def generate_response_with_llm(user_prompt: str, system_prompt: str, model: str) -> str:
     """Call the LLM via API to generate responses with caching."""
-    if CLEAN_CACHE_ON_STARTUP:
-        clean_cache()
     cache = init_cache()
     cache_key = generate_cache_key(user_prompt, system_prompt, model)
 
@@ -103,8 +105,6 @@ def generate_response_with_llm(user_prompt: str, system_prompt: str, model: str)
     # If not cached, call the LLM API
     try:
         logging.info(f"Sending request to LLM with model '{model}' and prompt size {len(user_prompt)}")
-
-        # Build the full prompt as per Llama's expected format
 
         payload = {
             "model": model,

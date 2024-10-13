@@ -12,43 +12,34 @@ import shutil
 # Set up logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# File Summary Prompt Template
+# Updated File Summary Prompt Template
 
 FILE_SUMMARY_PROMPT_TEMPLATE = """
-You are tasked with providing a **precise**, **comprehensive**, and **well-structured** English summary of a file from a software repository. Focus solely on summarizing the content of the file without generating or modifying any code. Do not include code snippets, feedback, or suggestions. Avoid speculative comments, recommendations, or potential improvements.
+Summarize the content of the following file by describing its purpose, functionality, and the key components it contains. The summary should cover:
 
-The summary must be:
-- **Factual and objective**: Include only verifiable information directly based on the file’s contents. Avoid assumptions, interpretations, or unsubstantiated conclusions.
-- **Specific and relevant**: Refer directly to the actual contents of the file. Focus on its purpose, functionality, and role within the broader system, avoiding unrelated information or generalizations.
-- **Concise yet complete**: Capture all essential details without redundancy. The summary should be clear, succinct, and free of unnecessary information.
+1. **Purpose**: The main goal or function of the file within the project.
+2. **Key Components**: Describe important classes, functions, or modules and their roles.
+3. **Data Flow**: Explain how data is processed or manipulated by this file (inputs/outputs).
+4. **Dependencies**: List any external or internal libraries, APIs, or other files it interacts with.
+5. **Interactions**: Describe how this file communicates with other parts of the system.
 
-When applicable, address the following relevant aspects:
-- **Purpose and functionality**: Summarize the core purpose of the file and what functionality it provides within the overall project.
-- **Key components**: Highlight critical elements such as functions, classes, or modules and explain their roles.
-- **Inputs and outputs**: Mention any inputs processed by the file and the outputs it generates.
-- **Dependencies**: Identify external or internal dependencies (e.g., libraries, APIs, or other files) and explain their usage.
-- **Data flow**: Describe how data is processed, transformed, or manipulated within the file.
-- **Interactions**: Explain how the file interacts with other components or systems.
-
-Your goal is to offer enough detail to give a clear understanding of the file’s role and its function within the codebase, without unnecessary elaboration.
+Do not include any code generation, feedback, suggestions, or any additional text unrelated to the actual file content. Focus only on factual information from the file content.
 
 **File being summarized**: {file_path}
 
 **File content**:
 {file_content}
-
-**Your task**
-Remember, your task is to summarize the **file’s content only** without generating any code or giving suggestions.
 """
 
-# System prompt to control behavior of the LLM
+# Updated System Prompt to improve LLM behavior
 SYSTEM_PROMPT = """
-You are a code summarization assistant. Your task is to provide **concise, high-level summaries** of code files. Focus on describing the file’s **purpose**, **functionality**, and **role** within the broader project. 
-- **Do not generate or modify code**.
-- **Do not include any technical details** such as specific variable names, functions, or code structure.
-- **Avoid feedback, suggestions, or explanations** about how the code works or potential improvements.
+You are a code summarization assistant. Your task is to provide concise, high-level summaries of code files, focusing on their purpose, functionality, and role within the broader project.
 
-Your summaries should remain focused on the **high-level intent** and interactions of the file within the system, ensuring they are clear, concise, and free from implementation details.
+- Do not include code snippets or technical details like variable names or function names.
+- Do not include any preambles, confirmations, or apologies.
+- Do not include any feedback, suggestions, or potential improvements.
+
+Your response should be the summary only.
 """
 
 DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your task is to generate valid and accurate diagram code in either PlantUML or Mermaid format, based solely on the provided prompts.
@@ -181,14 +172,15 @@ def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMA
 
         file_extension = file_path.suffix
         reader = get_reader(file_extension)
-        logging.info(f"Processing file {idx}/{total_files} ({file_path.name}) with reader for extension {file_extension}")
+        reader_name = reader.__module__.split('.')[-1]
+        logging.info(f"Processing file {idx}/{total_files} ({file_path.name}) using reader '{reader_name}' for extension '{file_extension}'")
 
         # Read file content
         try:
             file_content = reader(file_path)
             logging.debug(f"Read content from file {file_path}")
         except Exception as e:
-            logging.error(f"Error reading file {file_path}: {e}")
+            logging.error(f"Error reading file {file_path} with reader '{reader_name}': {e}")
             continue
 
         # Prepare the prompt for summarization

@@ -39,8 +39,9 @@ for module_file in module_files:
 def get_reader(file_extension):
     """Return the appropriate reader based on the file extension, or default to text reader."""
     reader = readers.get(file_extension.lower(), default_reader)
+    reader_name = reader.__module__.split('.')[-1]
     if reader == default_reader:
-        logging.info(f"No specific reader found for extension {file_extension}. Using default reader.")
+        logging.info(f"No specific reader found for extension '{file_extension}'. Using default reader '{reader_name}'.")
     else:
-        logging.info(f"Found specific reader for extension {file_extension}.")
+        logging.info(f"Found specific reader '{reader_name}' for extension '{file_extension}'.")
     return reader

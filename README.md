@@ -76,9 +76,9 @@ To install Ollama:
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
-After installation, pull the necessary model:
+After installation, pull the necessary model as specified in the config.py:
 ```bash
-ollama pull llama3.1:8b-instruct-fp16
+ollama pull deepseek-coder-v2:16b-lite-instruct-q5_K_M
 ```
 ### 3. Install Python Dependencies
 Python dependencies need to be installed:

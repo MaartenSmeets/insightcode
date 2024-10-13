@@ -13,60 +13,57 @@ import shutil
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # File Summary Prompt Template
-FILE_SUMMARY_PROMPT_TEMPLATE = """You are tasked with summarizing a file from a software repository. Provide only a **precise**, **comprehensive**, and **well-structured** English summary that accurately reflects the contents of the file. Do not write or update code. Do not generate code to create a summary but create a summary. Do not ask for confirmation. Do not provide suggestions. Do not provide recommendations. Do not mention potential improvements. Do not mention considerations. Focus solely on creating the summary. Avoid redundancy and do not summarize the summary. The summary must be:
 
-- **Factual and objective**: Include only verifiable information based on the provided file. Avoid any assumptions, opinions, interpretations, or speculative conclusions.
-- **Specific and relevant**: Directly reference the actual contents of the file. Avoid general statements or unrelated information. Focus on the specific purpose, functionality, and structure of the file.
-- **Concise yet complete**: Ensure that the summary captures all essential details while being succinct. Eliminate redundancy and unnecessary information.
+FILE_SUMMARY_PROMPT_TEMPLATE = """
+You are tasked with providing a **precise**, **comprehensive**, and **well-structured** English summary of a file from a software repository. Focus solely on summarizing the content of the file without generating or modifying any code. Do not include code snippets, feedback, or suggestions. Avoid speculative comments, recommendations, or potential improvements.
 
-In particular, address the following when applicable and relevant to the file’s role in the codebase. When not applicable, leave out the section:
-- **Purpose and functionality**: Describe the file's core purpose, what functionality it implements, and how it fits into the broader system.
-- **Key components**: Highlight any critical functions, classes, methods, or modules defined in the file and explain their roles.
-- **Inputs and outputs**: Explicitly mention any input data or parameters the file processes, and describe the outputs it generates.
-- **Dependencies**: Identify any internal or external dependencies (e.g., libraries, APIs, other files) and explain how they are used in the file.
-- **Data flow**: Describe the flow of data through the file, including how data is processed, transformed, or manipulated.
-- **Interactions**: If applicable, detail how this file interacts with other parts of the system or external systems.
+The summary must be:
+- **Factual and objective**: Include only verifiable information directly based on the file’s contents. Avoid assumptions, interpretations, or unsubstantiated conclusions.
+- **Specific and relevant**: Refer directly to the actual contents of the file. Focus on its purpose, functionality, and role within the broader system, avoiding unrelated information or generalizations.
+- **Concise yet complete**: Capture all essential details without redundancy. The summary should be clear, succinct, and free of unnecessary information.
 
-Your summary should provide enough detail to give a clear understanding of the file’s purpose and its function within the codebase, without adding unnecessary explanations or speculative content.
+When applicable, address the following relevant aspects:
+- **Purpose and functionality**: Summarize the core purpose of the file and what functionality it provides within the overall project.
+- **Key components**: Highlight critical elements such as functions, classes, or modules and explain their roles.
+- **Inputs and outputs**: Mention any inputs processed by the file and the outputs it generates.
+- **Dependencies**: Identify external or internal dependencies (e.g., libraries, APIs, or other files) and explain their usage.
+- **Data flow**: Describe how data is processed, transformed, or manipulated within the file.
+- **Interactions**: Explain how the file interacts with other components or systems.
+
+Your goal is to offer enough detail to give a clear understanding of the file’s role and its function within the codebase, without unnecessary elaboration.
 
 **File being summarized**: {file_path}
+
+**File content**:
 {file_content}
 
----
-
+**Your task**
 Remember, your task is to summarize the **file’s content only** without generating any code or giving suggestions.
 """
 
 # System prompt to control behavior of the LLM
 SYSTEM_PROMPT = """
-You are a code summarization assistant. Your task is to provide **concise, high-level summaries** of code files without including technical details, code generation, explanations, or feedback. Your summaries should describe the **purpose**, **functionality**, and **role** of each file within the overall project.
+You are a code summarization assistant. Your task is to provide **concise, high-level summaries** of code files. Focus on describing the file’s **purpose**, **functionality**, and **role** within the broader project. 
+- **Do not generate or modify code**.
+- **Do not include any technical details** such as specific variable names, functions, or code structure.
+- **Avoid feedback, suggestions, or explanations** about how the code works or potential improvements.
 
-### Instructions:
-- **Under no circumstances should you generate code, provide feedback, or include code snippets** in your summary. 
-- **Do not explain how the code works** or suggest any improvements. 
-- **Do not include any specific variable names, function names, or other technical elements**.
-- Focus strictly on the **high-level purpose** and **interactions** with other parts of the project. Do not provide explanations about code structure or logic.
-- **You are not allowed to modify or generate any code**.
+Your summaries should remain focused on the **high-level intent** and interactions of the file within the system, ensuring they are clear, concise, and free from implementation details.
 """
 
-DIAGRAM_SYSTEM_PROMPT = """
-You are a diagram code generation assistant. Your task is to generate **valid and accurate diagram code** for either PlantUML or Mermaid based on the provided prompts. Do not include any explanations, feedback, or summaries. Focus solely on generating the diagram code as per the instructions.
+DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your task is to generate valid and accurate diagram code in either PlantUML or Mermaid format, based solely on the provided prompts.
 
-### Instructions:
-- **Under no circumstances should you include explanations, feedback, or summaries** in your responses.
-- **Do not provide any additional text** beyond the diagram code.
-- **Ensure that the diagram code is syntactically correct** and adheres to the standards of the specified diagram language (PlantUML or Mermaid).
-- **Do not include comments or annotations** in the diagram code unless explicitly requested.
-- **Do not modify or generate any non-diagram code**.
-- Focus strictly on translating the provided prompts into the appropriate diagram code format.
-- **Maintain consistency and clarity** in the diagram code to accurately represent the intended architecture or data flow.
-- **Ensure that the diagram accurately reflects** the provided summary without introducing inaccuracies or omissions.
-- **Use appropriate diagram syntax** based on the output format (PlantUML or Mermaid) specified in the prompt.
-- **Do not mention file extensions, function parameters, or specific implementation details** in the diagram unless explicitly specified.
-- **Avoid using special characters** in labels; use alphanumeric characters and underscores for naming consistency.
-- **Do not wrap the diagram code in any markdown or code blocks**; provide only the raw diagram code.
+### Guidelines:
 
-Your responses should consist solely of the diagram code without any additional commentary or formatting.
+- **Do not include any explanations, comments, or additional text**; output only the diagram code.
+- **Ensure the diagram code is syntactically correct** and adheres to the standards of the specified diagram language.
+- **Focus on accurately representing** the provided summary or instructions in the diagram code.
+- **Use appropriate syntax and conventions** for the specified diagram language.
+- **Avoid special characters** in labels; use only alphanumeric characters and underscores.
+- **Do not include file extensions, function parameters, or specific implementation details** unless explicitly requested.
+- **Provide only the raw diagram code**, without wrapping it in markdown or code blocks.
+
+Your response should consist solely of the diagram code.
 """
 
 def clean_cache():

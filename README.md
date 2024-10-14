@@ -96,6 +96,10 @@ Place the code you want to analyze inside the repo/ folder. You may want to clea
 ## Run the Analysis:
 Run the main Python script, and InsightCode will automatically analyze the codebase, generate summaries for each file, and create a Mermaid diagram prompt for visualizing the architecture.
 
+```bash
+python main.py
+```
+
 # Output
 
 After running the script, InsightCode generates the following output files in the output/ folder:

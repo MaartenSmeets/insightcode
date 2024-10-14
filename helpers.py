@@ -30,12 +30,13 @@ def is_irrelevant_file(file_path: Path) -> bool:
         '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.svg', '.webp', '.ico',
         '.mp3', '.wav', '.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv', '.webm',
         # Documentation and miscellaneous files
-        '.md', '.rst', '.txt', '.csv', '.tsv', '.log', '.feature', '.pdf', '.docx', '.doc', '.xls', '.xlsx',
-        '.ppt', '.pptx', '.odt', '.ods', '.odp', '.rtf',
+        '.rst', '.csv', '.tsv', '.log', '.feature', '.xls', '.xlsx', '.odt', '.odp', '.rtf',
         # Archive and package files
         '.zip', '.tar', '.gz', '.tar.gz', '.tgz', '.rar', '.7z', '.bz2', '.xz', '.egg', '.gem', '.deb', '.rpm',
         # Other non-source code files
         '.swp', '.swo', '.tmp', '.cache', '.pyproj', '.csproj', '.sln', '.vcxproj',
+        # Spring and Java-related irrelevant files
+        '.iml', '.bak',  # IntelliJ IDEA files
     ]
 
     # List of irrelevant directories
@@ -59,6 +60,10 @@ def is_irrelevant_file(file_path: Path) -> bool:
         'LICENSE', 'LICENSE.txt', 'README', 'README.md', 'README.txt', 'CHANGES', 'CHANGELOG',
         'CONTRIBUTING', 'CODE_OF_CONDUCT', '.gitignore', '.gitattributes', 'Dockerfile',
         'Makefile', 'CMakeLists.txt', 'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml',
+        # Maven wrapper
+        'mvnw', 'mvnw.cmd',
+        # Gradle wrapper
+        'gradlew', 'gradlew.bat',
     ]
 
     # Define keywords to identify test files
@@ -108,6 +113,9 @@ def is_irrelevant_file(file_path: Path) -> bool:
         'go.mod', 'go.sum',
         # Rust build files
         'Cargo.toml', 'Cargo.lock',
+        # Spring and Spring Boot build files
+        'application.properties', 'application.yml', 'application.yaml',
+        'logback.xml',  # Logging config for Spring Boot
     ]
 
     # Check for build files

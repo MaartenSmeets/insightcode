@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import logging
 
-FILE_EXTENSIONS = ['.html', '.htm']
+FILE_EXTENSIONS = ['.html', '.htm', '.xhtml']
 
 def read_file(file_path):
     """Extract text from an HTML file."""

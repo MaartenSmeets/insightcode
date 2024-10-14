@@ -72,7 +72,7 @@ Make sure you have Python 3.x installed on your system. You can download it from
 ### 2. Install Ollama for local language model inference
 Ollama is required for running models locally.
 
-To install Ollama:
+To install Ollama in Linux do the following. For other OSs go to [https://ollama.com/download](https://ollama.com/download) and follow the instructions.
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```

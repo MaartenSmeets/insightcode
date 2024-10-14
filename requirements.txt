@@ -1,0 +1,10 @@
+requests
+chardet
+pdfplumber
+PyMuPDF
+pytesseract
+pillow
+python-pptx
+beautifulsoup4
+python-docx
+docx2txt

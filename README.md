@@ -2,6 +2,61 @@
 
 InsightCode is a tool designed to analyze codebases and provide detailed insights, including code summaries and architecture visualizations. This tool is ideal for gaining an understanding of legacy codebases, aiding in integration, modernization, or test scenario creation. The output can be used to ask questions about the code, generate diagrams, or create documentation.
 
+```mermaid
+flowchart LR
+    %% Define styles for different groups
+    classDef mainApp fill:#D5E8D4,stroke:#82B366,stroke-width:2px
+    classDef fileProc fill:#FFF2CC,stroke:#D6B656,stroke-width:2px
+    classDef summarization fill:#F8CECC,stroke:#B85450,stroke-width:2px
+    classDef diagramGen fill:#DAE8FC,stroke:#6C8EBF,stroke-width:2px
+    classDef utilities fill:#E1D5E7,stroke:#9673A6,stroke-width:2px
+    classDef external fill:#F5F5F5,stroke:#999999,stroke-width:2px
+    classDef dataStore fill:#F8F8F8,stroke:#666666,stroke-width:2px
+
+    %% Input and Output
+    Repository[Code Repository] -->|Provides codebase| FileProcessing[File Processing]
+
+    %% Main Application
+    subgraph Main_Application [Main Application]
+        direction TB
+        FileProcessing -->|Processes files| Summarization[Code Summarization]
+        Summarization -->|Generates summary| DiagramGeneration[Diagram Generation]
+        DiagramGeneration -->|Creates prompt| OutputPrompt[Diagram Prompt]
+    end
+    class Main_Application mainApp
+
+    %% External Systems
+    subgraph External_Systems [External Systems]
+        direction TB
+        Summarization -->|Calls API| OllamaAPI[Ollama Server API]
+        OllamaAPI -->|Provides responses| OllamaLLM[Ollama Language Model]
+    end
+    class OllamaAPI, OllamaLLM
+
+    %% Data Stores
+    class Repository,OutputPrompt dataStore
+
+    %% Utilities
+    class Helpers,Configuration utilities
+
+    %% Assign classes to components
+    class FileProcessing fileProc
+    class Summarization summarization
+    class DiagramGeneration diagramGen
+
+    %% Layout adjustments to minimize crossing lines
+    %% Position external systems to the right
+    %% Ensure repository is on the far left
+
+    %% Additional styling to enhance professionalism
+    linkStyle 0 stroke:#333, stroke-width:2px
+    linkStyle 1 stroke:#333, stroke-width:2px
+    linkStyle 2 stroke:#333, stroke-width:2px
+    linkStyle 3 stroke:#333, stroke-width:2px
+    linkStyle 4 stroke:#333, stroke-width:2px
+    linkStyle 5 stroke:#333, stroke-width:2px
+```
+
 ## Features
 - **Automated code summaries**: Get concise, accurate descriptions of code files.
 - **Mermaid diagram generation**: Visualize your system architecture in a flowchart format.
@@ -21,15 +76,18 @@ To install Ollama:
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
-After installation, pull the necessary model:
+After installation, pull the necessary model as specified in the config.py:
 ```bash
-ollama pull llama3.1:8b-instruct-fp16
+ollama pull deepseek-coder-v2:16b-lite-instruct-q5_K_M
 ```
 ### 3. Install Python Dependencies
-The following Python packages are required:
+Python dependencies need to be installed:
 ```bash
-pip install chardet requests docx2txt pdfplumber beautifulsoup4 pytesseract pillow PyMuPDF python-docx
+pip install -r requirements.txt
 ```
+
+Note: Make sure you have Tesseract OCR installed on your system for pytesseract to function properly. You may need to configure the Tesseract executable path if it's not in your system's PATH environment variable.
+
 # Preparing Code for Analysis
 
 ## Create a repo/ folder:
@@ -37,6 +95,10 @@ Place the code you want to analyze inside the repo/ folder. You may want to clea
 
 ## Run the Analysis:
 Run the main Python script, and InsightCode will automatically analyze the codebase, generate summaries for each file, and create a Mermaid diagram prompt for visualizing the architecture.
+
+```bash
+python main.py
+```
 
 # Output
 

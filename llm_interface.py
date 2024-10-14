@@ -42,6 +42,7 @@ You are a code summarization assistant. Your task is to provide concise, high-le
 Your response should be the summary only.
 """
 
+
 DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your task is to generate valid and accurate diagram code in the requested format, based solely on the provided prompts.
 
 ### Guidelines:

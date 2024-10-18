@@ -1,11 +1,12 @@
 import os
 from pathlib import Path
+import json
+import logging
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import time
-import logging
 from helpers import generate_unique_filename
 from .base_renderer import BaseRenderer
 
@@ -14,6 +15,9 @@ class MermaidRenderer(BaseRenderer):
 
     def generate_png(self, diagram_code: str, output_dir: Path) -> Path:
         """Generate a PNG image from Mermaid code with enhanced error handling and syntax checks."""
+        # Prepare the diagram code for embedding in JavaScript
+        diagram_code_js = json.dumps(diagram_code)  # Properly escape diagram_code for JavaScript string literal
+
         # Define the HTML template with Mermaid.js and enhanced error handling
         html_template = f"""
         <!DOCTYPE html>
@@ -27,13 +31,11 @@ class MermaidRenderer(BaseRenderer):
                 window.onload = function() {{
                     try {{
                         // Check if the diagram has valid syntax
-                        const isValid = mermaid.parse(`{diagram_code}`);
-                        if (!isValid) {{
-                            throw new Error("Invalid Mermaid syntax detected.");
-                        }}
+                        mermaid.parse({diagram_code_js});
 
-                        // Run the diagram rendering
-                        mermaid.run();
+                        // Initialize Mermaid
+                        mermaid.initialize({{ startOnLoad: true }});
+
                     }} catch (error) {{
                         document.getElementById('mermaid-error').textContent = error.message;
                     }}
@@ -41,9 +43,9 @@ class MermaidRenderer(BaseRenderer):
             </script>
         </head>
         <body>
-            <pre class="mermaid">
-                {diagram_code}
-            </pre>
+            <div class="mermaid">
+{diagram_code}
+            </div>
             <div id="mermaid-error" style="color: red; font-weight: bold;"></div>
         </body>
         </html>
@@ -56,7 +58,7 @@ class MermaidRenderer(BaseRenderer):
 
         # Configure Selenium to use headless mode
         chrome_options = Options()
-        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--headless=new")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--window-size=1920,1080")
 
@@ -78,11 +80,11 @@ class MermaidRenderer(BaseRenderer):
             has_severe_error = False
             error_messages = []
 
-            for log in logs:
-                logging.warning(f"Browser log: {log}")
-                if log['level'] == 'SEVERE':
+            for log_entry in logs:
+                logging.warning(f"Browser log: {log_entry}")
+                if log_entry['level'] == 'SEVERE':
                     has_severe_error = True
-                    error_messages.append(log['message'])
+                    error_messages.append(log_entry['message'])
 
             if has_severe_error:
                 combined_error_message = "\n".join(error_messages)

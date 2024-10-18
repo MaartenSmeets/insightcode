@@ -6,10 +6,10 @@ def generate_diagram_prompt(combined_summary: str) -> str:
     """Dynamically load and generate the diagram prompt based on the selected output format."""
     try:
         # Dynamically build the module name (e.g., 'mermaid_generator', 'plantuml_generator')
-        module_name = f'diagram_generators.{OUTPUT_FORMAT.lower()}_generator'
+        module_name = f'.{OUTPUT_FORMAT.lower()}_generator'
 
-        # Load the module dynamically
-        generator_module = importlib.import_module(module_name)
+        # Load the module dynamically relative to the 'diagram_generators' package
+        generator_module = importlib.import_module(module_name, package='diagram_generators')
 
         # Dynamically load the prompt generation function (e.g., 'generate_mermaid_prompt')
         generate_prompt_function = getattr(generator_module, f'generate_{OUTPUT_FORMAT.lower()}_prompt')
@@ -27,10 +27,10 @@ def generate_diagram_code(prompt: str) -> str:
     """Dynamically load and generate the diagram code based on the selected output format."""
     try:
         # Dynamically build the module name (e.g., 'mermaid_generator', 'plantuml_generator')
-        module_name = f'diagram_generators.{OUTPUT_FORMAT.lower()}_generator'
+        module_name = f'.{OUTPUT_FORMAT.lower()}_generator'
 
-        # Load the module dynamically
-        generator_module = importlib.import_module(module_name)
+        # Load the module dynamically relative to the 'diagram_generators' package
+        generator_module = importlib.import_module(module_name, package='diagram_generators')
 
         # Dynamically load the diagram code generation function (e.g., 'generate_mermaid_code')
         generate_code_function = getattr(generator_module, f'generate_{OUTPUT_FORMAT.lower()}_code')

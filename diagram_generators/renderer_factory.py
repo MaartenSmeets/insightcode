@@ -1,11 +1,5 @@
-# File: diagram_generators/renderer_factory.py
-
 import importlib
-import os
 import logging
-from pathlib import Path
-
-RENDERER_SUFFIX = '_renderer.py'
 
 def get_renderer(diagram_type: str):
     """
@@ -18,12 +12,12 @@ def get_renderer(diagram_type: str):
     diagram_type = diagram_type.lower()
 
     # Construct the expected module and class names
-    module_name = f'diagram_generators.{diagram_type}_renderer'
+    module_name = f'.{diagram_type}_renderer'
     class_name = f'{diagram_type.capitalize()}Renderer'
     
     try:
-        # Dynamically import the renderer module
-        renderer_module = importlib.import_module(module_name)
+        # Dynamically import the renderer module relative to the 'diagram_generators' package
+        renderer_module = importlib.import_module(module_name, package='diagram_generators')
 
         # Dynamically get the renderer class from the module
         renderer_class = getattr(renderer_module, class_name)

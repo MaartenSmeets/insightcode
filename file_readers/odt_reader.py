@@ -4,7 +4,7 @@ from odf.text import P
 
 FILE_EXTENSIONS = ['.odt']
 
-def read_odt(file_path):
+def read_file(file_path):
     """Read contents from an .odt (OpenDocument Text) file."""
     try:
         doc = load(file_path)

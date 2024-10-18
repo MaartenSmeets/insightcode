@@ -5,7 +5,7 @@ from odf.text import P
 
 FILE_EXTENSIONS = ['.odp']
 
-def read_odp(file_path):
+def read_file(file_path):
     """Read contents from an .odp (OpenDocument Presentation) file."""
     try:
         doc = load(file_path)

@@ -38,10 +38,9 @@ def configure_logging():
     )
 
 def clean_diagram_code(diagram_code: str) -> str:
-    """Clean the diagram code by removing code block markers."""
+    """Clean the diagram code by removing code block markers and any additional text."""
     # Remove code block markers such as ```mermaid, ```, :::mermaid, :::
     cleaned_code = re.sub(r'^```.*\n', '', diagram_code, flags=re.MULTILINE)
-    cleaned_code = re.sub(r'^:::\s*mermaid\s*\n', '', cleaned_code, flags=re.MULTILINE)
     cleaned_code = re.sub(r'^```\s*$', '', cleaned_code, flags=re.MULTILINE)
     cleaned_code = re.sub(r'^:::\s*$', '', cleaned_code, flags=re.MULTILINE)
     return cleaned_code.strip()
@@ -60,6 +59,8 @@ Based on the provided diagram code and the error message, fix the diagram code s
 - Ensure the corrected diagram code is valid and can be rendered without errors.
 - Output only the corrected diagram code.
 - **Do not include code block markers such as ``` or :::**
+- **Do not include any explanations, comments, annotations, or any text before or after the diagram code.**
+- **Provide only the corrected diagram code.**
 
 ---
 

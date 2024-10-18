@@ -47,7 +47,7 @@ DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your tas
 
 ### Guidelines:
 
-- **Do not include any explanations, comments, or additional text**; output only the diagram code.
+- **Do not include any explanations, comments, annotations, or additional text**; output only the diagram code.
 - **Ensure the diagram code is syntactically correct** and adheres to the standards of the specified diagram language.
 - **Focus on accurately representing** the provided summary or instructions in the diagram code.
 - **Use appropriate syntax and conventions** for the specified diagram language.
@@ -55,6 +55,8 @@ DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your tas
 - **Do not include file extensions, function parameters, or specific implementation details** unless explicitly requested.
 - **Provide only the raw diagram code**, without wrapping it in markdown or code blocks.
 - **Do not include code block markers such as ``` or :::**
+- **Do not include any explanations, comments, annotations, or any text before or after the diagram code.**
+- **Do not include comments within the code unless they are necessary for the diagram syntax.**
 
 """
 
@@ -213,4 +215,3 @@ def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMA
 
     # Combine all summaries and return
     return "\n".join(combined_summary)
-

@@ -28,6 +28,22 @@ Based on the provided codebase summary, generate a concise and professional **Me
 - **Provide only the Mermaid code, without any additional text before or after it.**
 - **Do not include comments within the code unless they are necessary for the Mermaid syntax.**
 
+### Example Mermaid Flowchart Syntax:
+
+graph LR
+    User[User] --> UI[User_Interface]
+    
+    subgraph Codebase
+        UI --> Backend[Backend_Service]
+        Backend --> API[External_API]
+    end
+    
+    subgraph External_Systems
+        Backend --> DB[Database]
+        API --> ThirdParty[Third_Party_System]
+    end
+
+This is an example flowchart illustrating a basic system layout, which includes nodes, edges, subgraphs, and external systems.
 ---
 
 **Input:**  

@@ -17,13 +17,14 @@ Based on the provided codebase summary, generate a concise and professional **Me
 
 - **Use a left-to-right flowchart layout** with inputs (e.g., users) on the left and external systems on the right.
 - **Group related components** using subgraphs.
-- **Label nodes and edges clearly**, avoiding special characters and using alphanumeric characters and underscores.
+- **Label nodes and edges clearly**, using simple and descriptive names.
+- **Avoid special characters**, function names with arguments, parentheses, quotation marks, or any code-specific details in labels.
+- **Use only alphanumeric characters and underscores** in labels.
 - **Represent external systems distinctly**, and encapsulate all internal components within a grouping named after the codebase.
 - **Apply minimal colors** to differentiate logical groupings without overwhelming the diagram.
-- **Avoid mentioning file extensions, function parameters, parentheses, or quotation marks**.
 - **Ensure Mermaid syntax is correct** and the diagram can be rendered without errors.
 - **Do not include any additional text** beyond the Mermaid code.
-- **Do not include code block markers such as ```mermaid, ```, :::mermaid, or :::; provide only the raw Mermaid code**
+- **Do not include code block markers such as \`\`\`mermaid, \`\`\`, :::mermaid, or :::; provide only the raw Mermaid code**
 - **Do not include any explanations, annotations, or text outside the Mermaid code.**
 - **Provide only the Mermaid code, without any additional text before or after it.**
 - **Do not include comments within the code unless they are necessary for the Mermaid syntax.**
@@ -32,12 +33,12 @@ Based on the provided codebase summary, generate a concise and professional **Me
 
 graph LR
     User[User] --> UI[User_Interface]
-    
+
     subgraph Codebase
         UI --> Backend[Backend_Service]
         Backend --> API[External_API]
     end
-    
+
     subgraph External_Systems
         Backend --> DB[Database]
         API --> ThirdParty[Third_Party_System]
@@ -45,7 +46,6 @@ graph LR
 
 This is an example flowchart illustrating a basic system layout, which includes nodes, edges, subgraphs, and external systems.
 ---
-
 **Input:**  
 - Codebase summary: {combined_summary}
 

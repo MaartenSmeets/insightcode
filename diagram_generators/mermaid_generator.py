@@ -4,7 +4,7 @@ from config import OUTPUT_DIR, DEFAULT_DIAGRAM_MODEL
 from helpers import save_output_to_file
 from llm_interface import generate_response_with_llm, DIAGRAM_SYSTEM_PROMPT
 
-# Mermaid Prompt Template
+# Updated Mermaid Prompt Template with explicit instructions
 MERMAID_PROMPT_TEMPLATE = """**Objective:**
 
 Based on the provided codebase summary, generate a concise and professional **Mermaid flowchart** that visually represents the system's architecture, major components, and data flow. Focus on:
@@ -23,6 +23,7 @@ Based on the provided codebase summary, generate a concise and professional **Me
 - **Avoid mentioning file extensions, function parameters, parentheses, or quotation marks**.
 - **Ensure Mermaid syntax is correct** and the diagram can be rendered without errors.
 - **Do not include any additional text** beyond the Mermaid code.
+- **Do not include code block markers such as ```mermaid, ```, :::mermaid, or :::; provide only the raw Mermaid code**
 
 ---
 
@@ -43,3 +44,4 @@ def generate_mermaid_code(prompt: str) -> str:
     # Generate the diagram code by sending the prompt to the LLM
     diagram_code = generate_response_with_llm(prompt, DIAGRAM_SYSTEM_PROMPT, model=DEFAULT_DIAGRAM_MODEL)
     return diagram_code  # Ensure a valid string is returned
+

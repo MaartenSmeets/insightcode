@@ -3,7 +3,7 @@ from pathlib import Path
 from config import OUTPUT_DIR, DEFAULT_DIAGRAM_MODEL
 from llm_interface import generate_response_with_llm, DIAGRAM_SYSTEM_PROMPT
 
-# Improved PlantUML Prompt Template (without @startuml and @enduml in the prompt itself)
+# Updated PlantUML Prompt Template with explicit instructions
 PLANTUML_PROMPT_TEMPLATE = """**Objective:**
 
 Based on the provided codebase summary, generate a concise and professional **PlantUML diagram** that visually represents the system's architecture, major components, and data flow. Focus on:
@@ -24,6 +24,7 @@ Based on the provided codebase summary, generate a concise and professional **Pl
 - **Avoid mentioning file extensions, function parameters, parentheses, or quotation marks**.
 - **Ensure PlantUML syntax is correct** and the diagram can be rendered without errors.
 - **Do not include any additional text** beyond the PlantUML code.
+- **Do not include code block markers such as ```plantuml, ```, @startuml, @enduml; provide only the raw PlantUML code**
 
 ---
 

@@ -1,3 +1,5 @@
+# File: config.py
+
 from pathlib import Path
 
 # Constants and Configuration
@@ -11,6 +13,7 @@ CLEAN_CACHE_ON_STARTUP = False  # Set to True to clean cache at startup, False t
 
 # Diagram Generation Configuration
 GENERATE_DIAGRAM = True  # Set to True to enable diagram generation, False to disable
+MAX_FIX_ATTEMPTS = 3  # Maximum number of attempts to fix the diagram code
 
 # Directories
 CACHE_DIR = Path('cache')

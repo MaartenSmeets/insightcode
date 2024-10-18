@@ -42,7 +42,7 @@ You are a code summarization assistant. Your task is to provide concise, high-le
 Your response should be the summary only.
 """
 
-
+# Updated Diagram System Prompt with explicit instructions
 DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your task is to generate valid and accurate diagram code in the requested format, based solely on the provided prompts.
 
 ### Guidelines:
@@ -54,6 +54,8 @@ DIAGRAM_SYSTEM_PROMPT = """You are a diagram code generation assistant. Your tas
 - **Avoid special characters** in labels; use only alphanumeric characters and underscores.
 - **Do not include file extensions, function parameters, or specific implementation details** unless explicitly requested.
 - **Provide only the raw diagram code**, without wrapping it in markdown or code blocks.
+- **Do not include code block markers such as ``` or :::**
+
 """
 
 def clean_cache():
@@ -150,7 +152,7 @@ def generate_response_with_llm(user_prompt: str, system_prompt: str, model: str)
         logging.error(f"Failed to generate response with LLM: {e}")
         cache.close()
         raise e
-    
+        
 
 def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMARIZATION_MODEL) -> str:
     """Summarize the entire repository and save individual summaries with unique filenames."""
@@ -211,3 +213,4 @@ def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMA
 
     # Combine all summaries and return
     return "\n".join(combined_summary)
+

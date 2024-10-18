@@ -11,3 +11,4 @@ docx2txt
 odfpy
 selenium
 webdriver-manager
+plantuml

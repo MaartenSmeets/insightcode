@@ -76,7 +76,7 @@ To install Ollama in Linux do the following. For other OSs go to [https://ollama
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
-After installation, pull the necessary model as specified in the config.py:
+After installation, pull the necessary model as specified in the config.py. The model suggested below requires a 16Gb NVIDIA or 32Gb CPU RAM
 ```bash
 ollama pull deepseek-coder-v2:16b-lite-instruct-q5_K_M
 ```

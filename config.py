@@ -12,7 +12,7 @@ DEFAULT_DIAGRAM_MODEL = "deepseek-coder-v2:236b-instruct-q3_K_M"  # Configurable
 CLEAN_CACHE_ON_STARTUP = False  # Set to True to clean cache at startup, False to retain cache
 
 # Diagram Generation Configuration
-GENERATE_DIAGRAM = True  # Set to True to enable diagram generation, False to disable
+GENERATE_DIAGRAM = False  # Set to True to enable diagram generation, False to disable
 MAX_FIX_ATTEMPTS = 2  # Maximum number of attempts to fix the diagram code
 
 # Directories

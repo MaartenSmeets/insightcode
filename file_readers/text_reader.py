@@ -1,7 +1,12 @@
 import chardet
 import logging
 
-FILE_EXTENSIONS = ['.txt', '.md', '.py', '.java', '.js', '.css', '.html', '.htm', '.c', '.cpp', '.h', '.json', '.xml', '.yml', '.yaml', '.conf', '.ini', '.log']
+# Expanded list of file extensions
+FILE_EXTENSIONS = [
+    '.txt', '.md', '.py', '.java', '.js', '.ts',
+    '.css', '.c', '.cpp', '.h', '.json', '.xml', '.yml', '.yaml', '.conf', '.ini', '.log', 
+    '.j2', '.tf', '.tfvars', '.properties', '.jsp', '.do', '.mvc', '.config'
+]
 
 def read_file(file_path):
     """Read plain text files with proper encoding."""

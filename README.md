@@ -72,11 +72,11 @@ Make sure you have Python 3.x installed on your system. You can download it from
 ### 2. Install Ollama for local language model inference
 Ollama is required for running models locally.
 
-To install Ollama:
+To install Ollama in Linux do the following. For other OSs go to [https://ollama.com/download](https://ollama.com/download) and follow the instructions.
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 ```
-After installation, pull the necessary model as specified in the config.py:
+After installation, pull the necessary model as specified in the config.py. The model suggested below requires a 16Gb NVIDIA or 32Gb CPU RAM
 ```bash
 ollama pull deepseek-coder-v2:16b-lite-instruct-q5_K_M
 ```
@@ -118,15 +118,25 @@ This file contains summaries of the code files analyzed. You can use these summa
 
 # Visualizing the Mermaid Diagram
 
-## Using ChatGPT
+## Prepare the Mermaid code using ChatGPT o1 (or another capable LLM)
 
-- Paste the content of mermaid_prompt.txt in a ChatGPT window and ask it to generate a Mermaid diagram.
-- If the file is too large, upload it as an attachment to ChatGPT and request the prompt to be executed.
+- Paste the content of mermaid_prompt.txt in the window of a capable LLM like ChatGPT o1 and ask it to generate a Mermaid diagram.
+- If the file is too large, upload it as an attachment and request the prompt to be executed.
 
-## Using Visual Studio Code (VSCode)
+## Visualize
+
+### Using Visual Studio Code (VSCode)
 
 - Install the Mermaid Markdown Extension in VSCode.
 - Create a .md file, paste the Mermaid code between :::mermaid and ::: code blocks, and view the diagram directly in VSCode.
+
+### Using Mermaid.Live
+
+- Paste the Mermaid code in [https://mermaid.live/](https://mermaid.live/) to visualize it there. You can then download a PNG by going to [https://mermaid.ink/](https://mermaid.ink/) and follow the instructions.
+
+### Using Mermaid CLI
+
+Install and use the Mermaid CLI interface from [https://github.com/mermaid-js/mermaid-cli](https://github.com/mermaid-js/mermaid-cli). Follow the instructions on the website to use this. It can be challenging to get this to work. mermaid-cli requires puppeteer, which requires either Chromium or Firefox
 
 # Usage Tips
 

@@ -8,3 +8,7 @@ python-pptx
 beautifulsoup4
 python-docx
 docx2txt
+odfpy
+selenium
+webdriver-manager
+plantuml

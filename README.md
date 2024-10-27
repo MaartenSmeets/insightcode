@@ -81,12 +81,25 @@ After installation, pull the necessary model as specified in the config.py. The 
 ollama pull deepseek-coder-v2:16b-lite-instruct-q5_K_M
 ```
 ### 3. Install Python Dependencies
-Python dependencies need to be installed:
+Create a virtual environment
+```bash
+python3 -m venv .venv
+```
+#### Activate the virtual environment
+##### Linux and similar
+```bash
+source .venv/bin/activate
+```
+##### Windows
+```bash
+.\.venv\Scripts\activate
+```
+#### Next Python dependencies need to be installed:
 ```bash
 pip install -r requirements.txt
 ```
 
-Note: Make sure you have Tesseract OCR installed on your system for pytesseract to function properly. You may need to configure the Tesseract executable path if it's not in your system's PATH environment variable.
+Note: Make sure you have Tesseract OCR installed on your system for pytesseract to function properly. This is needed for PDF parsing. You may need to configure the Tesseract executable path if it's not in your system's PATH environment variable.
 
 # Preparing Code for Analysis
 

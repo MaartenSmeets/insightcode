@@ -99,8 +99,20 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+#### Tesseract OCR
 Note: Make sure you have Tesseract OCR installed on your system for pytesseract to function properly. This is needed for PDF parsing. You may need to configure the Tesseract executable path if it's not in your system's PATH environment variable.
 
+##### Ubuntu and variants
+```bash
+sudo apt install tesseract-ocr
+```
+##### Fedora
+```bash
+sudo dnf install tesseract
+```
+##### Windows
+For Windows grab an installer from [https://github.com/UB-Mannheim/tesseract/wiki](https://github.com/UB-Mannheim/tesseract/wiki) and install it. Make sure to add Tesseract to your system's PATH by checking the appropriate option during installation (or adding it manually after installation).
+ 
 # Preparing Code for Analysis
 
 ## Create a repo/ folder:

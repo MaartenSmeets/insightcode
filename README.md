@@ -145,5 +145,3 @@ Install and use the Mermaid CLI interface from [https://github.com/mermaid-js/me
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-Made with ❤️ by the InsightCode team.

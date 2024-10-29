@@ -212,5 +212,11 @@ def summarize_codebase(directory: Path, summarization_model: str = DEFAULT_SUMMA
         progress_percentage = (idx / total_files) * 100
         logging.info(f"Progress: {progress_percentage:.2f}% ({idx}/{total_files} files processed)")
 
+    # Combine all summaries and save to combined_summary.txt
+    combined_summary_text = "\n".join(combined_summary)
+    combined_summary_file = OUTPUT_DIR / "combined_summary.txt"
+    save_output_to_file(combined_summary_text, combined_summary_file)
+    logging.info(f"Combined summary saved to {combined_summary_file}")
+
     # Combine all summaries and return
     return "\n".join(combined_summary)

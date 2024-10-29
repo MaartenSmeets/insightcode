@@ -42,7 +42,7 @@ def is_irrelevant_file(file_path: Path) -> bool:
     # List of irrelevant directories
     irrelevant_directories = [
         # Test directories
-        'test', 'tests', 'spec', 'specs', 'mock', 'mocks', 'stub', 'stubs', 'fixtures', 'benchmark', 'benchmarks',
+        'test', 'tests', 'spec', 'specs', 'mock', 'mocks', 'stub', 'stubs', 'fixtures', 'benchmark', 'benchmarks', 'ct', 'it', 'performance'
         # Version control and IDE directories
         '.git', '.svn', '.hg', '.idea', '.vscode', '__pycache__', '.tox', '.pytest_cache',
         # Build and dependency directories
@@ -66,9 +66,6 @@ def is_irrelevant_file(file_path: Path) -> bool:
         'gradlew', 'gradlew.bat',
     ]
 
-    # Define keywords to identify test files
-    test_keywords = ['test', 'spec', 'mock', 'stub', 'fixture', 'benchmark', 'ct', 'performance', 'it']
-
     # Check for irrelevant file extensions
     if file_path.suffix.lower() in irrelevant_extensions:
         return True
@@ -81,14 +78,6 @@ def is_irrelevant_file(file_path: Path) -> bool:
     if file_path.name in irrelevant_filenames:
         return True
 
-    # Exclude files that are test files based on filename patterns
-    if any(keyword in file_path.stem.lower() for keyword in test_keywords):
-        return True
-
-    # Exclude files in directories containing test keywords
-    if any(keyword in part.lower() for keyword in test_keywords for part in file_path.parts):
-        return True
-
     # Exclude large files (e.g., files larger than 500KB)
     if file_path.is_file() and file_path.stat().st_size > MAX_FILE_SIZE:
         return True
@@ -97,7 +86,7 @@ def is_irrelevant_file(file_path: Path) -> bool:
     build_files = [
         # Java and related build files
         'pom.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', 'settings.gradle.kts',
-        'gradlew', 'gradlew.bat', 'mvnw', 'mvnw.cmd',
+        'gradlew', 'gradlew.bat', 'mvnw', 'mvnw.cmd', '.gitignore','.gitattributes','.prettierrc','.prettierignore','.editorconfig',
         # .NET build files
         '*.csproj', '*.vbproj', '*.fsproj', '*.sln',
         # JavaScript and TypeScript build files
